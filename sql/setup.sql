@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS bogs;
+
+CREATE TABLE bogs (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    type TEXT NOT NULL,
+    climate TEXT NOT NULL,
+    substrate TEXT
+);
