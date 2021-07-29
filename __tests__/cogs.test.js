@@ -3,7 +3,6 @@ import setup from '../data/setup.js';
 import request from 'supertest';
 import app from '../lib/app.js';
 import Cog from '../lib/models/Cog.js';
-import cogs from '../lib/controllers/cogs.js';
 
 describe('cog routes', () => {
   beforeEach(() => {
