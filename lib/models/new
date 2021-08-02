@@ -1,0 +1,107 @@
+function find_length(value, base)
+{
+  let i = 0;
+  while (value >= base)
+  {
+    value = value / base;
+    i++;
+  }
+  return (i);
+}
+
+function convert_to_base(value, base, nbr, l)
+{
+  let c = '';
+  let j = 0;
+
+  j = 0;
+  while (value >= base)
+  {
+    if ((value % base) > 9)
+    {
+      c = String.fromCharCode(((value % base) - 10).charCodeAt(0) + 65);
+      nbr[l - j] = c;
+    }
+    else
+    {
+      c = String.fromCharCode((value % base).charCodeAt(0) + 48);
+      nbr[l - j] = c;
+    }
+    value = value / base;
+    j++;
+  }
+  if (value > 9)
+    nbr[l - j] = String.fromCharCode((value - 10).charCodeAt(0) + 65);
+  else
+    nbr[l - j] = String.fromCharCode(value.charCodeAt(0) + 48);
+  return (nbr);
+}
+
+const conv = (value, base) => {
+  let l = 0;
+  let sign = 1;
+  let nbr = [];
+
+  if (value < 0)
+  {
+    sign = -1;
+    value = value * -1;
+  }
+  l = find_length(value, base);
+  if (sign == -1)
+  {
+    l++;
+    nbr[0] = '-';
+  }
+  nbr = convert_to_base(value, base, nbr, l);
+  return (nbr);
+};
+
+module.exports = { conv };
+
+
+app.use('/api/v1/num', numController);
+const numController = require('./controllers/routes.js');
+
+
+const pool = require('../utils/pool');
+
+module.exports = class Convert {
+    id;
+    value;
+
+    constructor(row) {
+      this.id = row.id;
+      this.value = row.value;
+    }
+
+    static async insert(value) {
+      const { rows } = await pool.query(
+        'INSERT INTO num (value) VALUES ($1) RETURNING *',
+        [value]
+      );
+      return new Convert(rows[0]);
+    }
+};
+
+it('tests post', async () => {
+    const res = await request(app)
+      .post('/api/v1/num')
+      .send(43456);
+
+    expect(res.body).toEqual(43);
+
+  });
+
+const { request } = require('express');
+const { conv } = require('../utils/math.js');
+const Convert = require('../models/Convert.js');
+
+module.exports = class Base {
+  static async create(value) {
+    const base = await request.get('http://www.randomnumberapi.com/api/v1.0/random?min=2&max=16&count=1');
+    const converted = conv(value, base);
+    const newValue = await Convert.insert(converted);
+    return newValue;
+  }
+};
