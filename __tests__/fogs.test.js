@@ -11,12 +11,12 @@ describe('fog routes', () => {
   it('send to fog', async () => {
     const res = await request(app)
       .post('/api/v1/fogs')
-      .send({ type: 'radiation fog', formedBy: 'heat transfer' });
+      .send({ id: '1', type: 'radiation fog', formedby: 'heat transfer' });
 
     expect(res.body).toEqual({
       id: '1',
       type: 'radiation fog',
-      formedBy: 'heat transfer'
+      formedby: 'heat transfer'
     });
   });
 });
